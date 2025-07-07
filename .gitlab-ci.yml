@@ -1,0 +1,12 @@
+stages:
+  - build
+
+build-user-service:
+  stage: build
+  script:
+    - docker build -t user-service ./services/user-service
+
+build-order-service:
+  stage: build
+  script:
+    - docker build -t order-service ./services/order-service
