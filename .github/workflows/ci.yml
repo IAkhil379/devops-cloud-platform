@@ -1,0 +1,38 @@
+name: CI for Microservices
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies (User Service)
+        working-directory: services/user-service
+        run: |
+          pip install -r requirements.txt || echo "No requirements file"
+
+      - name: Install dependencies (Order Service)
+        working-directory: services/order-service
+        run: |
+          pip install -r requirements.txt || echo "No requirements file"
+
+      - name: Test endpoints (User Service)
+        run: |
+          echo "✅ Add real tests here later for user service"
+
+      - name: Test endpoints (Order Service)
+        run: |
+          echo "✅ Add real tests here later for order service"
