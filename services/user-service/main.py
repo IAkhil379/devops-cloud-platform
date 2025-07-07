@@ -1,14 +1,25 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
+import httpx
+
+from models import User
+from database import Base, engine
 
 app = FastAPI()
 
-@app.get("/")
-def root():
-    return {"message": "User service is running"}
+# Create tables
+Base.metadata.create_all(bind=engine)
 
-@app.get("/users")
-def get_users():
-    return [
-        {"id": 1, "name": "Akhil"},
-        {"id": 2, "name": "DevOps Pro"},
-    ]
+@app.get("/")
+def read_root():
+    return {"status": "User Service Running"}
+
+# ✅ Internal call to order-service
+@app.get("/orders-from-order-service")
+async def get_orders():
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.get("http://order-service:8001/orders")
+            response.raise_for_status()
+            return response.json()
+    except httpx.HTTPError as e:
+        raise HTTPException(status_code=500, detail=f"Failed to contact order-service: {e}")
