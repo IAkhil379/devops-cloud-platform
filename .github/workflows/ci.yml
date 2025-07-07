@@ -13,8 +13,7 @@ jobs:
     services:
       docker:
         image: docker:20.10.16-dind
-        privileged: true
-
+        
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
