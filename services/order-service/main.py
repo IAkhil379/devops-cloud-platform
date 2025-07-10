@@ -1,14 +1,22 @@
 from fastapi import FastAPI
+import httpx
 
 app = FastAPI()
 
 @app.get("/")
-def root():
-    return {"message": "Order service is running"}
+def read_root():
+    return {"message": "Welcome to the Order Service"}
 
 @app.get("/orders")
 def get_orders():
-    return [
-        {"id": 101, "item": "Laptop", "quantity": 1},
-        {"id": 102, "item": "Keyboard", "quantity": 2},
-    ]
+    # Fetch users from user-service
+    try:
+        response = httpx.get("http://user-service:8000/users")
+        users = response.json()
+    except Exception as e:
+        users = {"error": str(e)}
+
+    return {
+        "orders": ["Order 1", "Order 2"],
+        "fetched_users": users
+    }

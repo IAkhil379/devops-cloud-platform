@@ -5,7 +5,8 @@ WORKDIR /app
 COPY . /app
 
 RUN pip install --upgrade pip
-RUN pip install fastapi uvicorn
+RUN pip install fastapi uvicorn httpx
+
 
 EXPOSE 8001
 
