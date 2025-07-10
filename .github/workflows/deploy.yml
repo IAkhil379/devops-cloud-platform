@@ -1,9 +1,9 @@
-name: CD to EC2
+name: CD - Deploy to EC2
 
 on:
   push:
     branches:
-      - main  # Change to your deployment branch if not 'main'
+      - main
 
 jobs:
   deploy:
@@ -13,14 +13,23 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Copy files via SSH and deploy on EC2
-        uses: appleboy/ssh-action@v0.1.10
+      - name: Copy files to EC2 using SCP
+        uses: appleboy/scp-action@v0.1.3
         with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_KEY }}
+          host: 65.1.112.19
+          username: ec2-user
+          key: ${{ secrets.EC2_SSH_KEY }}
+          source: "."
+          target: "~/devops-cloud-platform"
+
+      - name: SSH into EC2 and Deploy
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: 65.1.112.19
+          username: ec2-user
+          key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            cd devops-cloud-platform
-            git pull origin main
+            cd ~/devops-cloud-platform
             docker-compose down
-            docker-compose up -d --build
+            docker-compose build
+            docker-compose up -d
